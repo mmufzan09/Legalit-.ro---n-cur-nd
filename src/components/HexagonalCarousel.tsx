@@ -5,7 +5,7 @@ import { useCarouselAnimation } from "@/hooks/useCarouselAnimation";
 import { useCarouselDrag } from "@/hooks/useCarouselDrag";
 import { getCardPosition } from "@/utils/carouselUtils";
 import { HexagonCard } from "@/components/HexagonCard";
-import throttle from "lodash.throttle"; // Install with:npm install lodash.throttle
+
 
 export const HexagonalCarousel: React.FC = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -52,7 +52,7 @@ export const HexagonalCarousel: React.FC = () => {
   }));
 
   // ➤ Throttled pointer move handler for smooth dragging
-  const throttledPointerMove = useCallback(throttle(handlePointerMove, 16), []);
+  const throttledPointerMove = useCallback(handlePointerMove, 16);
 
   // ➤ Drag area style
   const dragAreaStyle: React.CSSProperties = {
@@ -79,7 +79,7 @@ export const HexagonalCarousel: React.FC = () => {
       className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-visible"
       style={{ zIndex: 5 }}
     >
-      {/* ➤ Drag Area */}
+      /* ➤ Drag Area */
       <div
         ref={carouselRef}
         className="select-none pointer-events-auto"
