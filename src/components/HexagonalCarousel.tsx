@@ -1,4 +1,3 @@
-// HexagonalCarousel.tsx
 import React, {
   useRef,
   useState,
@@ -28,6 +27,7 @@ export const HexagonalCarousel: React.FC = () => {
   const prevRotationRef = useRef(0);
   const touchIdRef = useRef<number | null>(null);
   const lastMoveTimeRef = useRef(0);
+  const animationFrameIdRef = useRef<number | null>(null);
 
   const [rotation, setRotation, direction, setDirection, animationHook] =
     useCarouselAnimation();
@@ -57,7 +57,6 @@ export const HexagonalCarousel: React.FC = () => {
   }, [isDragging, animationHook]);
 
   const radius = isMobile ? 200 : 360;
-  const dragAreaSize = radius * (isMobile ? 1.5 : 1);
   const mobileTransform = isMobile ? "translateY(-55px)" : "translateY(-5px)";
   const cardSize = isMobile ? 75 : 98;
   const visibleFeatures = isMobile ? features.slice(0, 6) : features;
@@ -92,25 +91,27 @@ export const HexagonalCarousel: React.FC = () => {
 
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
-      const now = performance.now();
-      if (now - lastMoveTimeRef.current < 16) return;
+      if (animationFrameIdRef.current !== null) {
+        cancelAnimationFrame(animationFrameIdRef.current);
+      }
 
-      lastMoveTimeRef.current = now;
+      animationFrameIdRef.current = requestAnimationFrame(() => {
+        const touch = Array.from(e.changedTouches).find(
+          (t) => t.identifier === touchIdRef.current
+        );
+        if (!touch) return;
 
-      const touch = Array.from(e.changedTouches).find(
-        (t) => t.identifier === touchIdRef.current
-      );
-      if (!touch) return;
+        const syntheticEvent: PointerLike = {
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+          pointerId: touch.identifier,
+          pointerType: "touch",
+          preventDefault: () => e.preventDefault(),
+        };
 
-      const syntheticEvent: PointerLike = {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-        pointerId: touch.identifier,
-        pointerType: "touch",
-        preventDefault: () => e.preventDefault(),
-      };
+        handlePointerMove(syntheticEvent);
+      });
 
-      handlePointerMove(syntheticEvent);
       e.preventDefault();
     },
     [handlePointerMove]
@@ -159,9 +160,7 @@ export const HexagonalCarousel: React.FC = () => {
 
   const dragAreaStyle: React.CSSProperties = {
     width: "100vw",
-    maxWidth: isMobile ? "320px" : "560px",
-    height: "100%",
-    maxHeight: isMobile ? "320px" : "560px",
+    height: "100vh",
     touchAction: "none",
     zIndex: 5,
     cursor: isDragging ? "grabbing" : "grab",
@@ -171,10 +170,9 @@ export const HexagonalCarousel: React.FC = () => {
     WebkitTapHighlightColor: "transparent",
     MozUserSelect: "none",
     msUserSelect: "none",
-    overflow: "visible",
+    overflow: "hidden",
     position: "relative",
-    left: isMobile ? 0 : "40px",
-    transform: `${mobileTransform} translateZ(0)`,
+    transform: `translateZ(0) ${mobileTransform}`,
     willChange: "transform",
     contain: "strict",
     backfaceVisibility: "hidden",
@@ -182,11 +180,14 @@ export const HexagonalCarousel: React.FC = () => {
     WebkitOverflowScrolling: "touch",
     overscrollBehavior: "contain",
     WebkitTransform: "translateZ(0)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   };
 
   return (
     <div
-      className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-visible"
+      className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none overflow-visible"
       style={{ zIndex: 5 }}
     >
       <div
