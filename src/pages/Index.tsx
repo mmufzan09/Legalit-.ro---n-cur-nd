@@ -16,7 +16,7 @@ const Index = () => {
   const emailSignupTransform = isMobile ? 'translateY(-75px)' : 'translateY(2px)';
   
   // Slider state and handler
-  const [value, setValue] = useState([50]); // Initial slider value
+  const [value,setValue] = useState([]); // Initial slider value
   const handleValueChange = useCallback(
     (newValue: number[]) => {
       setValue(newValue); // Efficient state update
@@ -48,7 +48,7 @@ const Index = () => {
               max={100}
               step={1}
             />
-            <p className="text-center mt-2 text-sm text-gray-600">Value: {value[0]}</p>
+            <p className="text-center mt-2 text-sm text-gray-600"> {value[0]}</p>
           </div>
         </ScrollArea>
       </div>
