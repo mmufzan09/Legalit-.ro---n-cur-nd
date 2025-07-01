@@ -1,0 +1,25 @@
+
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="documentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="50%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Document body with rounded corners -->
+  <path d="M4 2 C4 2, 4 2, 6 2 L22 2 L28 8 L28 28 C28 29, 28 30, 26 30 L6 30 C4 30, 4 29, 4 28 Z" 
+        fill="url(#documentGradient)"/>
+  
+  <!-- Folded corner -->
+  <path d="M22 2 L28 8 L22 8 Z" 
+        fill="rgba(255, 255, 255, 0.3)"/>
+  
+  <!-- Letter "L" -->
+  <path d="M10 8 L10 22 L21 22" 
+        stroke="white" 
+        stroke-width="3" 
+        stroke-linecap="round" 
+        fill="none"/>
+</svg>
